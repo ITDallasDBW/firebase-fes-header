@@ -1,56 +1,60 @@
-import React from 'react';
-import './App.css';
-import logo from './assets/logo.png'
-import { auth } from "./firebase/init"
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import React from "react";
+import "./App.css";
+import logo from "./assets/logo.png";
+import { auth } from "./firebase/init";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from "firebase/auth";
 
 function App() {
-  const [user, setUser] = React.useState({});
-  const [loading, setLoading] = React.useState(true)
+  // `user` is null when no user is signed in. This makes conditional rendering
+  // simple: show the button only when `user` is a valid object.
+  const [user, setUser] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      setLoading(false)
+      setLoading(false);
       console.log(user);
-      if(user) {
-        setUser(user)
-      }
-    })
+      // `user` will be `null` when signed out, so store it directly.
+      setUser(user || null);
+    });
   }, []);
 
   function register() {
-    console.log('register');
+    console.log("register");
     createUserWithEmailAndPassword(auth, "email@eail.com", "test123")
-    .then((user) => {
-      console.log(user);
-    })
-    .catch((error) => {
-      console.log(error);
-    })
+      .then((user) => {
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   function login() {
     signInWithEmailAndPassword(auth, "email@eail.com", "test123")
-    .then(({user}) => {
-      console.log(user.email[0]);
-      setUser(user);
-    })
-    .catch((error) => {
-      console.log(error.message);
-    });
+      .then(({ user }) => {
+        console.log(user.email[0]);
+        setUser(user);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   }
 
   function logout() {
     console.log("logout");
-    signOut(auth);
-    setUser({});
+    // signOut returns a promise; clear local user state after success.
+    signOut(auth)
+      .then(() => setUser(null))
+      .catch((err) => console.log(err));
   }
 
-
-
-
   return (
-
     <div className="App">
       <div className="dashboard__nav">
         <div className="dashboard__nav--content">
@@ -62,14 +66,26 @@ function App() {
             </figure>
           </div>
           <div className="nav__links">
-            <span className="nav__link--home" onClick={login}>Login</span>
-            <button className="btn btn--primary nav__btn" onClick={register}>Register</button>
-            <button className=" nav__icon" onClick={logout}>{user.email[0]}</button>
+            {user ? (
+              <button className="nav__icon" onClick={logout}>
+                {user.email && user.email[0]}
+              </button>
+            ) : (
+              <>
+                <span className="nav__link--home" onClick={login}>
+                  Login
+                </span>
+                <button
+                  className="btn btn--primary nav__btn"
+                  onClick={register}
+                >
+                  Register
+                </button>
+              </>
+            )}
           </div>
-
         </div>
       </div>
-      
     </div>
   );
 }
