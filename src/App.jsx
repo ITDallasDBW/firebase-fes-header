@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       console.log(user || "no user yet");
-      setUser(user || null);
+      // setUser(user || null);
     });
   }, []);
 
