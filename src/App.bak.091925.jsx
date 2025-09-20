@@ -13,9 +13,8 @@ function App() {
   // `user` is null when no user is signed in. This makes conditional rendering
   // simple: show the button only when `user` is a valid object.
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [loggedOut, setLoggedOut] = useState(true);
-  // const [showSecondButton, setShowSecondButton] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showSkeleton, setShowSkeleton] = useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -28,7 +27,7 @@ function App() {
 
   function register() {
     console.log("register");
-    createUserWithEmailAndPassword(auth, "email@eail.com", "test123")
+    createUserWithEmailAndPassword(auth, "email@email.com", "test123")
       .then((user) => {
         console.log(user);
       })
@@ -38,16 +37,18 @@ function App() {
   }
 
   function login() {
-    setLoggedOut(false);
-    setLoading(true);
-    signInWithEmailAndPassword(auth, "email@eail.com", "test123")
+    // setLoading(true);
+    setShowSkeleton(true);
+    signInWithEmailAndPassword(auth, "email@email.com", "test123")
       .then(({ user }) => {
         console.log(user.email[0]);
         console.log("logged in");
-        setTimeout(() => {
-          setLoading(false);
-          setUser(user);
-        }, 2000);
+        // setTimeout(() => {
+        //   console.log("2 seconds")
+        //   setShowSkeleton(false);
+        setUser(user);
+
+        // }, 2000);
       })
       .catch((error) => {
         console.log(error.message);
@@ -57,12 +58,18 @@ function App() {
   function logout() {
     console.log("logout");
     // signOut returns a promise; clear local user state after success.
-    setLoggedOut(true);
     signOut(auth)
       .then(() => setUser(null))
       .catch((err) => console.log(err));
   }
 
+  function loggedIn() {
+    return (
+      <button className="nav__icon" onClick={logout}>
+        {user.email && user.email[0]}
+      </button>
+    );
+  }
   return (
     <div className="App">
       <div className="dashboard__nav">
@@ -76,18 +83,14 @@ function App() {
           </div>
 
           <div className="nav__links">
-            {loading && (
-              <button className="load__btn load__btn--wide">Loading</button>
-            )}
-
             {user ? (
               <button className="nav__icon" onClick={logout}>
                 {user.email && user.email[0]}
               </button>
             ) : (
               <>
-                {loggedOut && (
-                  <div className="homepage">
+                {loading && (
+                  <div className="home__btns">
                     <span className="nav__link--home" onClick={login}>
                       Login
                     </span>
@@ -97,6 +100,17 @@ function App() {
                     >
                       Register
                     </button>
+                  </div>
+                )}
+
+                {showSkeleton && (
+                  <div className="load__skeleton">
+                    <div className="home__btns">
+                      <button className="load__btn load__btn--wide">
+                        Logging in...
+                      </button>
+                      <button className="load__btn load__btn--circle">C</button>
+                    </div>
                   </div>
                 )}
               </>

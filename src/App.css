@@ -51,6 +51,36 @@ a {
     width: 100%;
     max-width: 240px;
 }
+.load__skeleton {
+    display: flex;
+}
+.load__btn {
+    margin: 8px;
+    padding: 8px;
+    font-size: 24px;
+    border-radius: 4px;
+    height: 40px;
+    color: white;
+
+}
+.load__btn--wide {
+    width: 125px;
+    border: none;
+    background-color: rgb(124, 100, 100);
+
+}
+.load__btn--circle {
+    border-radius: 50%;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    padding: 16px;    
+    border: none;
+    background-color: rgb(124, 100, 100);
+
+}
 .nav__links {
     padding: 0 18px;
 }

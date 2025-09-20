@@ -13,14 +13,13 @@ function App() {
   // `user` is null when no user is signed in. This makes conditional rendering
   // simple: show the button only when `user` is a valid object.
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [loggedOut, setLoggedOut] = useState(true);
-  // const [showSecondButton, setShowSecondButton] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showSecondButton, setShowSecondButton] = useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      // setLoading(false);
-      console.log(user || "no user yet");
+      setLoading(false);
+      console.log(user || 'no user yet');
       // `user` will be `null` when signed out, so store it directly.
       setUser(user || null);
     });
@@ -38,16 +37,15 @@ function App() {
   }
 
   function login() {
-    setLoggedOut(false);
-    setLoading(true);
+    setShowSecondButton(true);
     signInWithEmailAndPassword(auth, "email@eail.com", "test123")
       .then(({ user }) => {
         console.log(user.email[0]);
-        console.log("logged in");
+        console.log('logged in');
+        setUser(user);
         setTimeout(() => {
-          setLoading(false);
-          setUser(user);
-        }, 2000);
+          setShowSecondButton(false)
+        }, 1000);
       })
       .catch((error) => {
         console.log(error.message);
@@ -57,7 +55,6 @@ function App() {
   function logout() {
     console.log("logout");
     // signOut returns a promise; clear local user state after success.
-    setLoggedOut(true);
     signOut(auth)
       .then(() => setUser(null))
       .catch((err) => console.log(err));
@@ -76,29 +73,25 @@ function App() {
           </div>
 
           <div className="nav__links">
-            {loading && (
-              <button className="load__btn load__btn--wide">Loading</button>
-            )}
 
+            {showSecondButton && <button>I'm the second button</button>}
+            
             {user ? (
+              
               <button className="nav__icon" onClick={logout}>
                 {user.email && user.email[0]}
               </button>
             ) : (
               <>
-                {loggedOut && (
-                  <div className="homepage">
-                    <span className="nav__link--home" onClick={login}>
-                      Login
-                    </span>
-                    <button
-                      className="btn btn--primary nav__btn"
-                      onClick={register}
-                    >
-                      Register
-                    </button>
-                  </div>
-                )}
+                <span className="nav__link--home" onClick={login}>
+                  Login
+                </span>
+                {/* <button
+                  className="btn btn--primary nav__btn"
+                  onClick={register}
+                >
+                  Register
+                </button> */}
               </>
             )}
           </div>
