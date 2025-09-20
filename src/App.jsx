@@ -10,27 +10,23 @@ import {
 } from "firebase/auth";
 
 function App() {
-  // `user` is null when no user is signed in. This makes conditional rendering
-  // simple: show the button only when `user` is a valid object.
+  // `user` is null when no user is signed in. 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loggedOut, setLoggedOut] = useState(true);
-  // const [showSecondButton, setShowSecondButton] = useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      // setLoading(false);
       console.log(user || "no user yet");
-      // `user` will be `null` when signed out, so store it directly.
       setUser(user || null);
     });
   }, []);
 
   function register() {
     console.log("register");
-    createUserWithEmailAndPassword(auth, "email@eail.com", "test123")
+    createUserWithEmailAndPassword(auth, "email@email.com", "test123")
       .then((user) => {
-        console.log(user);
+        // console.log(user);
       })
       .catch((error) => {
         console.log(error);
@@ -40,10 +36,10 @@ function App() {
   function login() {
     setLoggedOut(false);
     setLoading(true);
-    signInWithEmailAndPassword(auth, "email@eail.com", "test123")
+    signInWithEmailAndPassword(auth, "email@email.com", "test123")
       .then(({ user }) => {
-        console.log(user.email[0]);
-        console.log("logged in");
+        // console.log(user.email[0]);
+        // console.log("logged in");
         setTimeout(() => {
           setLoading(false);
           setUser(user);
@@ -82,7 +78,7 @@ function App() {
 
             {user ? (
               <button className="nav__icon" onClick={logout}>
-                {user.email && user.email[0]}
+                {user.email[0]}
               </button>
             ) : (
               <>
